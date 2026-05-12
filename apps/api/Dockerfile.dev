@@ -1,0 +1,13 @@
+# Development image with hot reload
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+WORKDIR /app
+EXPOSE 8080
+
+ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+
+COPY . .
+RUN dotnet restore
+
+CMD ["dotnet", "watch", "run", "--project", "src/AiEncyclopedia.API/AiEncyclopedia.API.csproj", "--no-launch-profile"]

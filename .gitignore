@@ -1,0 +1,58 @@
+# === Node / Frontend ===
+node_modules/
+dist/
+.next/
+.nuxt/
+build/
+coverage/
+*.tsbuildinfo
+.vite/
+.turbo/
+
+# === .NET / Backend ===
+bin/
+obj/
+*.user
+*.suo
+.vs/
+_ReSharper*/
+*.DotSettings.user
+TestResults/
+*.nupkg
+*.snupkg
+launchSettings.json
+
+# === Environment / Secrets ===
+.env
+.env.local
+.env.*.local
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+*.cer
+secrets/
+
+# === Docker ===
+docker-compose.override.yml.bak
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === IDEs ===
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+
+# === Logs ===
+logs/
+*.log
+npm-debug.log*
+
+# === Misc ===
+*.bak
+*.tmp

@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette — deep academic indigo */
+  --color-brand-50: #f0f4ff;
+  --color-brand-100: #e0e9ff;
+  --color-brand-200: #c7d7fe;
+  --color-brand-300: #a5b8fb;
+  --color-brand-400: #8292f8;
+  --color-brand-500: #3b5bdb;
+  --color-brand-600: #2f4ac7;
+  --color-brand-700: #2340b0;
+  --color-brand-800: #1e3499;
+  --color-brand-900: #1e2b6b;
+
+  /* AI accent — electric purple */
+  --color-accent-400: #a855f7;
+  --color-accent-500: #7c3aed;
+  --color-accent-600: #6d28d9;
+
+  /* Surface */
+  --color-surface: #ffffff;
+  --color-surface-dark: #0f1117;
+  --color-surface-muted: #f8f9fc;
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+#root { min-height: 100svh; }
+
+/* Typography defaults */
+h1, h2, h3, h4 { font-family: var(--font-heading); color: #0f1117; }

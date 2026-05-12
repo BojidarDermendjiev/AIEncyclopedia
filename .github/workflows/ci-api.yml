@@ -1,0 +1,96 @@
+name: CI — API
+
+on:
+  push:
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/ci-api.yml"
+  pull_request:
+    paths:
+      - "apps/api/**"
+
+env:
+  DOTNET_VERSION: "8.0.x"
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: encyclopedia_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        working-directory: apps/api
+        run: dotnet restore
+
+      - name: Build
+        working-directory: apps/api
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        working-directory: apps/api
+        run: |
+          dotnet test --no-build --configuration Release \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults \
+            --logger "trx;LogFileName=test-results.trx"
+        env:
+          ConnectionStrings__Postgres: "Host=localhost;Port=5432;Database=encyclopedia_test;Username=test;Password=test"
+          ConnectionStrings__Redis: "localhost:6379,abortConnect=false"
+          Jwt__Secret: "test-secret-key-at-least-32-characters-long"
+          Jwt__Issuer: "ai-encyclopedia-test"
+          Jwt__Audience: "ai-encyclopedia-users-test"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: apps/api/TestResults/
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          directory: apps/api/TestResults
+          fail_ci_if_error: false

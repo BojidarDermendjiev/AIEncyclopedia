@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AiEncyclopedia.API/AiEncyclopedia.API.csproj" />
+    <Project Path="src/AiEncyclopedia.Application/AiEncyclopedia.Application.csproj" />
+    <Project Path="src/AiEncyclopedia.Domain/AiEncyclopedia.Domain.csproj" />
+    <Project Path="src/AiEncyclopedia.Infrastructure/AiEncyclopedia.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AiEncyclopedia.API.Tests/AiEncyclopedia.API.Tests.csproj" />
+    <Project Path="tests/AiEncyclopedia.Application.Tests/AiEncyclopedia.Application.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,59 @@
+# Development overrides — NOT committed with production secrets
+# Override DOMAIN for local dev
+version: "3.9"
+
+services:
+  traefik:
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--log.level=DEBUG"
+    ports:
+      - "80:80"
+      - "8080:8080"
+
+  api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile.dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5000:8080"
+    volumes:
+      - ../apps/api:/app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-dev.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.api-dev.entrypoints=web"
+      - "traefik.http.services.api-dev.loadbalancer.server.port=8080"
+
+  web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5000
+    volumes:
+      - ../apps/web:/app
+      - /app/node_modules
+
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  n8n:
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678

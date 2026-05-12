@@ -1,0 +1,140 @@
+@BASE = http://localhost:5240
+@TOKEN = paste-your-jwt-here
+
+### Health check
+GET {{BASE}}/health
+
+###
+# ── Auth ──────────────────────────────────────────────────────────────────────
+
+### Register
+POST {{BASE}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "displayName": "Test User",
+  "password": "Password123!"
+}
+
+### Login
+POST {{BASE}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123!"
+}
+
+### Refresh token
+POST {{BASE}}/api/v1/auth/refresh
+Content-Type: application/json
+
+{
+  "token": "paste-refresh-token-here"
+}
+
+###
+# ── Articles ──────────────────────────────────────────────────────────────────
+
+### List articles (paginated)
+GET {{BASE}}/api/v1/articles?page=1&pageSize=10
+
+### Get article by slug
+GET {{BASE}}/api/v1/articles/introduction-to-machine-learning
+
+###
+# ── Search ────────────────────────────────────────────────────────────────────
+
+### Full-text search
+GET {{BASE}}/api/v1/search?q=machine+learning&page=1&pageSize=10
+
+###
+# ── Users (requires JWT) ──────────────────────────────────────────────────────
+
+### Get my profile
+GET {{BASE}}/api/v1/users/me
+Authorization: Bearer {{TOKEN}}
+
+### Get bookmarks
+GET {{BASE}}/api/v1/users/bookmarks
+Authorization: Bearer {{TOKEN}}
+
+### Add bookmark
+POST {{BASE}}/api/v1/users/bookmarks/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{TOKEN}}
+
+### Get reading history
+GET {{BASE}}/api/v1/users/history?limit=10
+Authorization: Bearer {{TOKEN}}
+
+### Record reading progress
+POST {{BASE}}/api/v1/users/history
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "articleId": "00000000-0000-0000-0000-000000000001",
+  "progressPercent": 75
+}
+
+###
+# ── PDFs (requires JWT) ───────────────────────────────────────────────────────
+
+### Generate PDF
+POST {{BASE}}/api/v1/pdfs/generate
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "articleId": "00000000-0000-0000-0000-000000000001",
+  "style": 0
+}
+
+### PDF library
+GET {{BASE}}/api/v1/pdfs/library
+Authorization: Bearer {{TOKEN}}
+
+###
+# ── Subscriptions ─────────────────────────────────────────────────────────────
+
+### Create checkout session
+POST {{BASE}}/api/v1/subscriptions/checkout
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "tier": 1,
+  "successUrl": "http://localhost:3000/dashboard?success=1",
+  "cancelUrl": "http://localhost:3000/pricing"
+}
+
+###
+# ── Admin (requires Admin role) ───────────────────────────────────────────────
+
+### List all articles
+GET {{BASE}}/api/v1/admin/articles?page=1&pageSize=20
+Authorization: Bearer {{TOKEN}}
+
+### Publish article
+PUT {{BASE}}/api/v1/admin/articles/00000000-0000-0000-0000-000000000001/publish
+Authorization: Bearer {{TOKEN}}
+
+### List users
+GET {{BASE}}/api/v1/admin/users
+Authorization: Bearer {{TOKEN}}
+
+### AI jobs
+GET {{BASE}}/api/v1/admin/ai-jobs
+Authorization: Bearer {{TOKEN}}
+
+### Generate article via AI
+POST {{BASE}}/api/v1/admin/articles/generate
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "topicId": "00000000-0000-0000-0000-000000000001",
+  "difficulty": 0,
+  "provider": null
+}
